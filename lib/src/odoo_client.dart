@@ -99,6 +99,7 @@ class OdooClient {
 
   /// Returns stream of inRequest events
   Stream<bool> get inRequestStream => _inRequestStreamController.stream;
+
   Future get inRequestStreamDone => _inRequestStreamController.done;
 
   /// Frees HTTP client resources
@@ -162,12 +163,33 @@ class OdooClient {
   /// Low Level RPC call.
   /// It has to be used on all Odoo Controllers with type='json'
 
-  void logger(){
+  void logger() {
     Logger().i("log!");
   }
 
   Future<dynamic> callRPC(path, funcName, params) async {
-    var headers = {'Content-type': 'application/json'};
+    var headers = {
+      // 'Accept': "*/*",
+      // 'Accept-Encoding': 'gzip, deflate, br',
+      // 'Accept-Language': 'en-US,en;q=0.9,fa;q=0.8',
+      // 'Connection': 'keep-alive',
+      // 'Content-Length': '1159',
+      'Content-Type': 'application/json',
+      // 'Cookie':
+      //     'tz=Asia/Tehran; frontend_lang=en_US; session_id=21c3813c78459d4534a8f9337deca3cd43d3dcc5; cids=35',
+      // 'Host': 'https://55618503-17-0-all.runbot210.odoo.com',
+      // 'Origin': 'https://55618503-17-0-all.runbot210.odoo.com',
+      // 'Referer': 'https://55618503-17-0-all.runbot210.odoo.com/web',
+      // 'Sec-Fetch-Dest': 'empty',
+      // 'Sec-Fetch-Mode': 'cors',
+      // 'Sec-Fetch-Site': 'same-origin',
+      // 'User-Agent':
+      //     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      // 'sec-ch-ua':
+      //     '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
+      // 'sec-ch-ua-mobile': '?0',
+      // 'sec-ch-ua-platform': "Windows",
+    };
     var cookie = '';
     if (_sessionId != null) {
       cookie = 'session_id=${_sessionId!.id}';
@@ -184,17 +206,21 @@ class OdooClient {
     }
 
     final uri = Uri.parse(baseURL + path);
-    var body = json.encode({
-      'jsonrpc': '2.0',
-      'method': 'funcName',
-      'params': params,
-      'id': sha1.convert(utf8.encode(DateTime.now().toString())).toString()
-    });
+    var body = json.encode(
+      {
+        'jsonrpc': '2.0',
+        'method': funcName,
+        'params': params,
+        'id': sha1.convert(utf8.encode(DateTime.now().toString())).toString()
+      },
+    );
 
     try {
       if (_inRequestStreamActive) _inRequestStreamController.add(true);
       final response = await httpClient.post(uri, body: body, headers: headers);
-
+      Logger().wtf(response.headers);
+      Logger().wtf(response.statusCode);
+      Logger().wtf(response.body);
       _updateSessionIdFromCookies(response);
       var result = json.decode(response.body);
       if (result['error'] != null) {
