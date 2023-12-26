@@ -5,6 +5,7 @@ import 'dart:core';
 
 import 'package:crypto/crypto.dart';
 import 'package:http/http.dart' as http;
+import 'package:logger/logger.dart';
 
 import 'cookie.dart';
 import 'odoo_exceptions.dart';
@@ -160,6 +161,11 @@ class OdooClient {
 
   /// Low Level RPC call.
   /// It has to be used on all Odoo Controllers with type='json'
+
+  void logger(){
+    Logger().i("log!");
+  }
+
   Future<dynamic> callRPC(path, funcName, params) async {
     var headers = {'Content-type': 'application/json'};
     var cookie = '';
