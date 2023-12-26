@@ -12,7 +12,7 @@ class OdooSession {
   final int partnerId;
 
   /// User's company database id
-  final int companyId;
+  final int? companyId;
 
   /// User's login
   final String userLogin;
@@ -62,7 +62,7 @@ class OdooSession {
       id: info['id'] as String? ?? '',
       userId: info['uid'] as int,
       partnerId: info['partner_id'] as int,
-      companyId: info['company_id'] as int,
+      companyId: info['company_id'] as int?,
       userLogin: info['username'] as String,
       userName: info['name'] as String,
       userLang: ctx['lang'] as String,
@@ -96,7 +96,7 @@ class OdooSession {
       id: json['id'] as String,
       userId: json['userId'] as int,
       partnerId: json['partnerId'] as int,
-      companyId: json['companyId'] as int,
+      companyId: json['companyId'] as int?,
       userLogin: json['userLogin'] as String,
       userName: json['userName'] as String,
       userLang: json['userLang'] as String,
