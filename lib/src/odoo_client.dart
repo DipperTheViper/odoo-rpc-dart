@@ -210,7 +210,8 @@ class OdooClient {
       }
 
       if (_inRequestStreamActive) _inRequestStreamController.add(false);
-      return result['result'];
+      // return result['result'];
+      return response.body;
     } catch (e) {
       if (_inRequestStreamActive) _inRequestStreamController.add(false);
       rethrow;
